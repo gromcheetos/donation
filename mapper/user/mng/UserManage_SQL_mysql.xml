@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="userManageDAO">
+
+ 	<select id="selectUserMngList" resultType="egovMap">
+ 		/* userManageDAO.selectUserMngList */
+ 		SELECT
+ 			T1.MEM_SEQ, 
+			T1.MEM_NAME, 
+			T1.EMAIL_ID, 
+			T1.MEM_PW, 
+			T1.EMAIL_KEY, 
+			T1.EMAIL_CONFIRM, 
+			T1.EMAIL_DATE, 
+			T1.MEM_LEV,
+			T1.MEM_STATUS,
+			T2.CODE_NM as mem_status_nm,
+			T1.MEM_GUBUN,
+			T3.CODE_NM as mem_gubun_nm,
+			T1.REG_DATE
+		FROM MEMBER T1 
+		LEFT OUTER JOIN CMMNDETAILCODE T2 ON T1.MEM_STATUS = T2.CODE AND T2.CODE_ID = 'COM013'
+		LEFT OUTER JOIN CMMNDETAILCODE T3 ON T1.MEM_GUBUN = T3.CODE AND T3.CODE_ID = 'COM003'
+		WHERE 1 =1 
+        <if test="@egovframework.com.cmm.util.EgovMybaitsUtil@isNotEmpty(searchKeyword)">
+        	<if test="searchCondition == 0">
+				AND T1.EMAIL_ID LIKE CONCAT ('%', #{searchKeyword},'%') 
+        	</if>
+        	<if test="searchCondition == 1">
+				AND T1.MEM_NAME LIKE CONCAT ('%', #{searchKeyword},'%') 
+        	</if>
+        </if>
+		<if test="searchMemStatus != '0'.toString()">
+				AND T1.MEM_STATUS = #{searchMemStatus}
+		</if> 
+        ORDER BY T1.MEM_SEQ DESC
+        LIMIT #{recordCountPerPage} OFFSET #{firstIndex}
+ 	</select>
+ 	
+ 	<select id="selectUserMngListCnt" resultType="int">
+ 		/* userManageDAO.selectUserMngListCnt */
+ 		SELECT
+ 			COUNT(1) totcnt
+		FROM MEMBER
+		WHERE 1 =1 
+        <if test="@egovframework.com.cmm.util.EgovMybaitsUtil@isNotEmpty(searchKeyword)">
+        	<if test="searchCondition == 0">
+				AND EMAIL_ID LIKE CONCAT ('%', #{searchKeyword},'%') 
+        	</if>
+        	<if test="searchCondition == 1">
+				AND MEM_NAME LIKE CONCAT ('%', #{searchKeyword},'%') 
+        	</if>
+        </if>
+		<if test="searchMemStatus != '0'.toString()">
+				AND MEM_STATUS = #{searchMemStatus}
+		</if> 
+        ORDER BY MEM_SEQ DESC
+        LIMIT #{recordCountPerPage} OFFSET #{firstIndex}
+ 	</select>
+
+ 	<select id="checkIdDplct_S" resultType="int">
+        /* userManageDAO.selectUserListCnt */
+        SELECT COUNT(1) usedCnt
+		FROM(
+            SELECT
+                EMAIL_ID as userId
+            FROM MEMBER
+            ) A
+        WHERE userId = #{checkId}
+        
+    </select>
+
+	<insert id="insertMber">
+		/* userManageDAO.insertMber */
+		INSERT INTO MEMBER (
+			MEM_NAME, 
+			EMAIL_ID, 
+			MEM_PW, 
+			MEM_GUBUN,
+			MEM_STATUS,
+			REG_DATE
+		) VALUES (
+			#{memName}, 
+			#{emailId}, 
+			#{memPw}, 
+			#{memGubun},
+			#{memStatus},
+			sysdate()
+		)
+	</insert>
+    
+    <!-- <delete id="deleteMber_S">
+        /* userManageDAO.deleteMber_S */
+		DELETE FROM MEMBER 
+		WHERE MEM_SEQ = #{delId}
+    </delete> -->
+    
+    <select id="updateMberView" resultType="admin.user.mng.service.UserManageVO">
+		/* userManageDAO.updateMberView */
+		SELECT 
+			MEM_SEQ, 
+			MEM_NAME, 
+			EMAIL_ID, 
+			MEM_PW, 
+			EMAIL_KEY, 
+			EMAIL_CONFIRM, 
+			EMAIL_DATE, 
+			MEM_LEV, 
+			MEM_GUBUN, 
+			MEM_STATUS, 
+			REG_DATE
+		FROM 
+			MEMBER 
+		WHERE MEM_SEQ=#{memSeq}
+    </select>
+    
+    <update id="updateProcess">
+        /* userManageDAO.updateProcess */
+		UPDATE MEMBER 
+		SET
+			MEM_NAME 		= #{memName}, 
+			MEM_STATUS		= #{memStatus},
+			MEM_GUBUN		= #{memGubun}
+		WHERE
+			MEM_SEQ = #{memSeq} ;
+        
+    </update>
+    
+	<select id="selectPassword_S" resultType="admin.user.mng.service.UserManageVO">
+        /* userManageDAO.selectPassword_S */
+		SELECT
+			MEM_PW as memPw 
+		FROM    MEMBER
+		WHERE   MEM_SEQ	=	#{memSeq}
+    </select>
+
+    <!-- <select id="selectStplat_S" resultMap="stplatMap">
+            SELECT
+                USE_STPLAT_ID           ,
+                USE_STPLAT_CN           ,
+                INFO_PROVD_AGRE_CN      
+            FROM COMTNSTPLATINFO
+            WHERE USE_STPLAT_ID=#{stplatId}
+    </select> -->
+    
+    <update id="updatePassword">
+		/* userManageDAO.updatePassword */
+	    UPDATE MEMBER 
+	    SET 
+	           MEM_PW   =  #{memPw}
+	    WHERE  MEM_SEQ  = #{memSeq}
+    </update>
+
+</mapper>

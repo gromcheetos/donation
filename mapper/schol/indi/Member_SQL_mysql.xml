@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="UTF-8"?><!--Converted at: Wed May 11 15:49:38 KST 2016-->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="Member">
+
+	<!-- <typeAlias  alias="egovMap" type="egovframework.rte.psl.dataaccess.util.EgovMap"/>
+	<typeAlias  alias="UserInfVO" type="egovframework.let.cop.com.service.UserInfVO"/> -->
+
+	
+	<resultMap id="MemberInfs" type="admin.schol.indi.service.Member">
+		<result property="memSeq" column="mem_seq" />
+		<result property="memName" column="mem_name" />
+		<result property="emailId" column="email_id" />
+		<result property="memPw" column="mem_pw" />
+		<result property="emailKey" column="email_key" />
+		<result property="emailConfirm" column="email_confirm" />
+		<result property="emailDate" column="email_date" />
+		<result property="memLev" column="mem_lev" />
+		<result property="memStatus" column="mem_status" />
+		<result property="regDate" column="reg_date" />
+		
+	</resultMap>	
+
+	<select id="selectDonerId" parameterType="admin.schol.indi.service.Member" resultMap="MemberInfs">
+		
+			SELECT
+				email_id
+			FROM
+				member 
+			where
+			
+			email_id LIKE CONCAT ('%', #{searchWrd},'%')		
+
+						
+	</select>
+
+ 	<!-- <select id="selectUserList" parameterType="egovframework.cop.com.service.UserInfVO" resultMap="UserInfs" >
+ 		<![CDATA[
+			SELECT 
+				ESNTL_ID, USER_ID, USER_NM, USER_ZIP, USER_ADRES, USER_EMAIL
+			FROM 
+				COMVNUSERMASTER
+			WHERE 1=1 
+ 		]]>
+			<if test="searchCnd == 0">
+				AND USER_NM LIKE CONCAT ('%', #{searchWrd},'%')
+			</if>
+		<![CDATA[			
+			ORDER BY USER_NM 
+			LIMIT #{recordCountPerPage} OFFSET #{firstIndex}
+		]]>					
+ 	</select>
+ 	
+	<select id="selectUserListCnt" parameterType="egovframework.cop.com.service.UserInfVO" resultType="java.lang.Integer" >
+		<![CDATA[
+			SELECT 
+				COUNT(ESNTL_ID)
+			FROM 
+				COMVNUSERMASTER
+			WHERE 1=1 
+		]]>
+			<if test="searchCnd == 0">
+				AND USER_NM LIKE CONCAT ('%', #{searchWrd},'%')
+			</if>
+	</select>	
+ 
+	<select id="selectCmmntyUserList" parameterType="egovframework.cop.com.service.UserInfVO" resultMap="UserInfList" >
+ 		<![CDATA[
+			SELECT 
+				a.ESNTL_ID, a.USER_ID, a.USER_NM, a.USER_ZIP, a.USER_ADRES, a.USER_EMAIL, b.USE_AT,
+				(SELECT USE_AT from LETTNCMMNTY WHERE CMMNTY_ID = #{trgetId}) AS DELETED_AT
+			FROM 
+				COMVNUSERMASTER a, LETTNCMMNTYUSER b
+			WHERE 
+				a.ESNTL_ID = b.EMPLYR_ID 
+			AND
+				b.CMMNTY_ID = #{trgetId}
+ 		]]>
+			<if test="searchCnd == 0">
+				AND a.USER_NM LIKE CONCAT ('%', #{searchWrd},'%')
+			</if>
+		<![CDATA[			
+			ORDER BY a.USER_NM 
+			LIMIT #{recordCountPerPage} OFFSET #{firstIndex}
+		]]>				
+ 	</select>
+ 	
+	<select id="selectCmmntyUserListCnt" parameterType="egovframework.cop.com.service.UserInfVO" resultType="java.lang.Integer" >
+		<![CDATA[
+			SELECT 
+				COUNT(a.ESNTL_ID)
+			FROM 
+				COMVNUSERMASTER a, LETTNCMMNTYUSER b
+			WHERE 
+				a.ESNTL_ID = b.EMPLYR_ID
+			AND
+				b.CMMNTY_ID = #{trgetId}
+		]]>
+			<if test="searchCnd == 0">AND
+				a.USER_NM LIKE CONCAT ('%', #{searchWrd},'%')
+			</if>
+	</select>
+ 
+
+	<select id="selectCmmntyMngrList" parameterType="egovframework.cop.com.service.UserInfVO" resultMap="UserInfList" >
+ 		<![CDATA[
+			SELECT 
+				a.ESNTL_ID, a.USER_ID, a.USER_NM, a.USER_ZIP, a.USER_ADRES, a.USER_EMAIL, b.USE_AT, 
+				(SELECT USE_AT from LETTNCMMNTY WHERE CMMNTY_ID = #trgetId#) AS DELETED_AT
+			FROM 
+				COMVNUSERMASTER a, LETTNCMMNTYUSER b
+			WHERE 
+				a.ESNTL_ID = b.EMPLYR_ID 
+			AND
+				b.MNGR_AT = 'Y'
+			AND
+				b.CMMNTY_ID = #{trgetId}				
+ 		]]>
+			<if test="searchCnd == 0">AND
+				a.USER_NM LIKE CONCAT ('%', #{searchWrd},'%')
+			</if>
+		<![CDATA[			
+			ORDER BY a.USER_NM 
+			LIMIT #{recordCountPerPage} OFFSET #{firstIndex}
+		]]>				
+ 	</select>
+ 	
+	<select id="selectCmmntyMngrListCnt" parameterType="egovframework.cop.com.service.UserInfVO" resultType="java.lang.Integer" >
+		<![CDATA[
+			SELECT 
+				COUNT(a.ESNTL_ID)
+			FROM 
+				COMVNUSERMASTER a, LETTNCMMNTYUSER b
+			WHERE 
+				a.ESNTL_ID = b.EMPLYR_ID 
+			AND
+				b.MNGR_AT = 'Y'
+			AND
+				b.CMMNTY_ID = #{trgetId}				
+		]]>
+			<if test="searchCnd == 0">AND
+				a.USER_NM LIKE CONCAT ('%', #{searchWrd},'%')
+			</if>		
+	</select>
+	
+
+	<select id="selectClubUserList" parameterType="egovframework.cop.com.service.UserInfVO" resultMap="UserInfList" >
+ 		<![CDATA[
+			SELECT 
+				a.ESNTL_ID, a.USER_ID, a.USER_NM, a.USER_ZIP, a.USER_ADRES, a.USER_EMAIL, b.USE_AT,
+				(SELECT USE_AT from LETTNCLUB WHERE CLB_ID = #trgetId#) AS DELETED_AT
+			FROM 
+				COMVNUSERMASTER a, LETTNCLUBUSER b
+			WHERE 
+				a.ESNTL_ID = b.EMPLYR_ID 
+			AND
+				b.CLB_ID = #{trgetId}
+ 		]]>
+			<if test="searchCnd == 0">AND
+				a.USER_NM LIKE CONCAT ('%', #{searchWrd},'%')
+			</if>
+		<![CDATA[			
+			ORDER BY a.USER_NM 
+			LIMIT #{recordCountPerPage} OFFSET #{firstIndex}
+		]]>				
+ 	</select>
+ 	
+	<select id="selectClubUserListCnt" parameterType="egovframework.cop.com.service.UserInfVO" resultType="java.lang.Integer" >
+		<![CDATA[
+			SELECT 
+				COUNT(a.ESNTL_ID)
+			FROM 
+				COMVNUSERMASTER a, LETTNCLUBUSER b
+			WHERE 
+				a.ESNTL_ID = b.EMPLYR_ID 
+			AND
+				b.CLB_ID = #{trgetId}						
+		]]>
+			<if test="searchCnd == 0">AND
+				a.USER_NM LIKE CONCAT ('%', #{searchWrd},'%')
+			</if>
+	</select>
+
+	<select id="selectClubOprtrList" parameterType="egovframework.cop.com.service.UserInfVO" resultMap="UserInfList" >
+ 		<![CDATA[
+			SELECT 
+				a.ESNTL_ID, a.USER_ID, a.USER_NM, a.USER_ZIP, a.USER_ADRES, a.USER_EMAIL, b.USE_AT,
+				(SELECT USE_AT from LETTNCLUB WHERE CLB_ID = #trgetId#) AS DELETED_AT
+			FROM 
+				COMVNUSERMASTER a, LETTNCLUBUSER b
+			WHERE 
+				a.ESNTL_ID = b.EMPLYR_ID 
+			AND
+				b.OPRTR_AT = 'Y'
+			AND
+				b.CLB_ID = #{trgetId}
+ 		]]>
+			<if test="searchCnd == 0">AND
+				<![CDATA[	a.USER_NM LIKE CONCAT ('%', #{searchWrd},'%') 		]]>
+			</if>
+		<![CDATA[			
+			ORDER BY a.USER_NM 
+			LIMIT #{recordCountPerPage} OFFSET #{firstIndex}
+		]]>				
+ 	</select>
+ 	
+	<select id="selectClubOprtrListCnt" parameterType="egovframework.cop.com.service.UserInfVO" resultType="java.lang.Integer" >
+		<![CDATA[
+			SELECT 
+				COUNT(a.ESNTL_ID)
+			FROM 
+				COMVNUSERMASTER a, LETTNCLUBUSER b
+			WHERE 
+				a.ESNTL_ID = b.EMPLYR_ID 
+			AND
+				b.OPRTR_AT = 'Y'
+			AND
+				b.CLB_ID = #{trgetId}
+		]]>
+			<if test="searchCnd == 0">AND
+				a.USER_NM LIKE CONCAT ('%', #{searchWrd},'%')
+			</if>
+	</select>
+
+	<select id="selectAllClubUser" parameterType="egovframework.cop.com.service.UserInfVO" resultMap="AllUserInfList" >
+		<![CDATA[
+			SELECT EMPLYR_ID as ESNTL_ID, CLB_ID as TRGET_ID 
+			FROM LETTNCLUBUSER WHERE USE_AT = 'Y'
+			AND CLB_ID = #{trgetId}			
+		]]>
+	</select>
+	
+	<select id="selectAllCmmntyUser" parameterType="egovframework.cop.com.service.UserInfVO" resultMap="AllUserInfList" >
+		<![CDATA[
+			SELECT EMPLYR_ID as ESNTL_ID, CMMNTY_ID as TRGET_ID 
+			FROM LETTNCMMNTYUSER WHERE USE_AT = 'Y'
+			AND CMMNTY_ID =  #{trgetId}	
+		]]>
+	</select>	 -->
+
+</mapper>

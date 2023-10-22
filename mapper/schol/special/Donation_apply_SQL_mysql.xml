@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="UTF-8"?><!-- 
+	수정일                 수정자                          수정내용
+  =========     =======    =================================================
+  2011.09.21    서준식              NTT_ID를 IDGENT서비스를 사용해서 생성하므로 selectMaxNttId문은 실제 사용하지 않음
+-->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="Donation">
+
+	
+	
+	<resultMap id="donerList" type="admin.schol.special.service.Doner">
+		<result property="doAppSeq" column="do_app_seq"/>
+		<result property="donationGubun" column="donation_gubun"/>
+		<!-- <result property="emailId" column="email_id"/> -->
+		<!-- <result property="donerName" column="doner_name"/> -->
+		<result property="doAmount" column="do_amount"/>
+		<result property="doAppDate" column="do_app_date"/>
+		<result property="doPeriod" column="do_period"/>
+		<result property="donerPhone" column="doner_phone"/>
+		
+	</resultMap>
+
+	
+	
+ 	
+	<!-- <insert id="insertArticle" parameterType="admin.schol.indi.service.ScholVO">
+		
+			INSERT INTO scholarship
+			(schol_gubun, mem_seq, email_id, 
+			 mem_name, schol_item, schol_amount, schol_note, 
+			 schol_ck, schol_date   
+			 )
+			VALUES
+			( 0,  #{memSeq}, #{emailId}, 
+			  #{memName}, #{scholItem}, #{scholAmount}, #{scholNote}, 
+			  '0',SYSDATE()
+			 )			
+		
+	</insert> -->
+
+	
+	<select id="selectScholSpecialList" parameterType="admin.schol.special.service.Doner" resultMap="donerList">
+		
+			SELECT
+				d.*, s.email_id
+			FROM
+				donation as d
+			LEFT JOIN
+				scholarship as s
+			ON
+				d.email_id=s.email_id
+			
+						
+	</select>	
+	
+	<!-- <select id="selectScholIndiListCnt" parameterType="admin.schol.indi.service.ScholVO" resultType="java.lang.Integer">
+		
+			SELECT
+				COUNT(a.schol_seq)
+			FROM
+				scholarship a
+			WHERE
+				1=1 
+		
+			<if test="searchCnd == 0">AND
+					a.schol_item LIKE CONCAT ('%', #{searchWrd},'%') 		
+			</if>
+			<if test="searchCnd == 1">AND
+					a.email_id LIKE CONCAT ('%', #{searchWrd},'%') 		
+			</if>	
+			
+	</select>	
+ 
+	<select id="selectScholIndiDetail" parameterType="admin.schol.indi.service.ScholVO" resultMap="boardList">
+		
+			SELECT
+				a.schol_seq, a.schol_gubun, a.schol_gubunNm,a. mem_seq,
+				a.email_id, a.mem_name, a.schol_item, a.schol_amount, a.schol_note, a.schol_ck,
+				schol_date, a.schol_confirm
+			FROM
+				scholarship a	
+			WHERE
+				a.schol_seq = #{scholSeq}	
+			
+						
+	</select>
+	
+	
+ 	<update id="updateArticle" parameterType="admin.schol.indi.service.ScholVO">
+ 		
+			UPDATE scholarship SET 
+				mem_seq = #{memSeq},
+				email_id = #{emailId}, 
+				mem_name = #{memName},		
+				schol_item = #{scholItem},
+				schol_amount = #{scholAmount},
+				schol_note = #{scholNote},
+				schol_ck = #{scholCk},
+				schol_date = SYSDATE()
+				
+			WHERE schol_seq = #{scholSeq}
+			
+ 		
+ 	</update>
+
+ 	<update id="deleteArticle" parameterType="admin.schol.indi.service.ScholVO">
+ 		
+			DELETE from scholarship
+			WHERE schol_seq = #{scholSeq}
+ 		
+ 	</update>
+
+ 	<select id="updateScholCk" parameterType="admin.schol.indi.service.ScholVO" >
+ 		
+			UPDATE scholarship SET 
+			schol_ck = 1,
+			schol_confirm = SYSDATE()
+			WHERE schol_seq = #{scholSeq}
+ 		
+ 	</select>
+ 	
+ 	<select id="updateScholConfirm" parameterType="admin.schol.indi.service.ScholVO" >
+ 		
+			UPDATE scholarship SET 
+			schol_ck = 0
+			
+			WHERE schol_seq = #{scholSeq}
+ 		
+ 	</select>
+ 	
+ 	<select id="updateScholClosed" parameterType="admin.schol.indi.service.ScholVO" >
+ 		
+			UPDATE scholarship SET 
+			schol_ck = 2
+			
+			WHERE schol_seq = #{scholSeq}
+ 		
+ 	</select>
+ 	
+
+ 	<update id="updateInqireCo" parameterType="egovframework.com.cop.bbs.service.BoardVO">
+ 		
+			UPDATE COMTNBBS SET 
+				RDCNT = #{inqireCo},
+				LAST_UPDUSR_ID = #{lastUpdusrId},
+				LAST_UPDT_PNTTM = SYSDATE()
+			WHERE BBS_ID = #{bbsId}
+			AND NTT_ID = #{nttId}
+ 		
+ 	</update>
+
+ 	
+ 	
+	
+	<select id="selectScholSpecialList" parameterType="admin.schol.indi.service.ScholVO" resultMap="boardList">
+		
+			SELECT
+				a.schol_seq, a.schol_gubun, a.schol_gubunNm,a. mem_seq,
+				a.email_id, a.mem_name, a.schol_item, a.schol_amount, a.schol_note, a.schol_ck,
+				a.schol_date, a.schol_confirm, a.schol_goalAmount, a.schol_curAmount
+			FROM
+				scholarship a
+			WHERE
+				1=1 AND a.schol_gubun =1			
+		
+			<if test="searchCnd == 0">AND
+					a.schol_item LIKE CONCAT ('%', #{searchWrd},'%') 		
+			</if>
+			<if test="searchCnd == 1">AND
+					a.email_id LIKE CONCAT ('%', #{searchWrd},'%') 		
+			</if>				
+					
+			ORDER BY a.schol_seq DESC
+			LIMIT #{recordCountPerPage} OFFSET #{firstIndex}
+						
+	</select>	
+	
+	
+	
+	<select id="selectScholSpecialDetail" parameterType="admin.schol.indi.service.ScholVO" resultMap="boardList">
+		
+			SELECT
+				a.schol_seq, a.schol_gubun, a.schol_gubunNm,a. mem_seq,
+				a.email_id, a.mem_name, a.schol_item, a.schol_amount, a.schol_note, a.schol_ck,
+				schol_date, a.schol_confirm, a.schol_goalAmount, a.schol_curAmount
+			FROM
+				scholarship a	
+			WHERE
+				a.schol_seq = #{scholSeq}	
+			
+						
+	</select>
+	
+	<insert id="insertSpecial" parameterType="admin.schol.indi.service.ScholVO">
+		
+			INSERT INTO scholarship
+			(schol_gubun, mem_seq, email_id, 
+			 mem_name, schol_item, schol_amount, schol_note, 
+			 schol_ck, schol_date, schol_goalAmount  
+			 )
+			VALUES
+			( 1,  #{memSeq}, #{emailId}, 
+			  #{memName}, #{scholItem}, #{scholAmount}, #{scholNote}, 
+			  '0',SYSDATE(), #{scholGoalAmount}
+			 )			
+		
+	</insert>
+	
+	<update id="updateSpecial" parameterType="admin.schol.indi.service.ScholVO">
+ 		
+			UPDATE scholarship SET 
+				mem_seq = #{memSeq},
+				email_id = #{emailId}, 
+				mem_name = #{memName},		
+				schol_item = #{scholItem},
+				schol_amount = #{scholAmount},
+				schol_note = #{scholNote},
+				schol_ck = #{scholCk},
+				schol_date = SYSDATE(),
+				schol_goalAmount = #{scholGoalAmount},
+				schol_curAmount = #{scholCurAmount}
+			WHERE schol_seq = #{scholSeq}
+			
+ 		
+ 	</update>
+ 	
+ 	 -->
+	
+	
+	
+</mapper>

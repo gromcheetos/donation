@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE form-validation PUBLIC 
+    "-//Apache Software Foundation//DTD Commons Validator Rules Configuration 1.1//EN" 
+    "http://jakarta.apache.org/commons/dtds/validator_1_1.dtd">
+
+<form-validation>
+
+    <formset>
+		<form name="schol">
+			<field property="scholItem" depends="required, maxlength">
+        		<arg0 key="comCopBbs.articleVO.list.scholItem" />
+        		<arg1 key="1200" resource="false"/>
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>1200</var-value>
+				</var>
+			</field>
+			<field property="scholGoalAmount" depends="required, maxlength">
+        		<arg0 key="scholspecial.list.targetAmount" />
+        		<arg1 key="1200" resource="true"/>
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>1200</var-value>
+				</var>
+			</field>
+			<field property="scholCurAmount" depends="maxlength">
+        		<arg0 key="scholspecial.list.currentAmount" />
+        		<arg1 key="1200" resource="true"/>
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>1200</var-value>
+				</var>
+			</field>
+			
+			<field property="scholNote" depends="required">
+        		<arg0 key="scholindi.list.detail.index" />
+			</field> 
+		</form>
+    </formset>
+ 
+    <formset>
+		<form name="scholVO">
+			<field property="emailId" depends="required, maxlength">
+        		<arg0 key="comCopBbs.articleVO.regist.doner" />
+        		<arg1 key="1200" resource="false"/>
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>1200</var-value>
+				</var>
+			</field>
+			<field property="memName" depends="required, maxlength">
+        		<arg0 key="scholindi.list.detail.donername" />
+        		<arg1 key="1200" resource="true"/>
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>1200</var-value>
+				</var>
+			</field>
+			<field property="scholAmount" depends="maxlength">
+        		<arg0 key="scholindi.list.detail.scholAmount" />
+        		<arg1 key="1200" resource="true"/>
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>1200</var-value>
+				</var>
+			</field>
+			<field property="scholItem" depends="maxlength">
+        		<arg0 key="comCopBbs.articleVO.list.scholItem" />
+        		<arg1 key="1200" resource="true"/>
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>1200</var-value>
+				</var>
+			</field>
+			<field property="scholNote" depends="required">
+        		<arg0 key="scholindi.list.detail.index" />
+			</field> 
+		</form>
+    </formset>
+
+</form-validation>

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE form-validation PUBLIC 
+    "-//Apache Software Foundation//DTD Commons Validator Rules Configuration 1.1//EN" 
+    "http://jakarta.apache.org/commons/dtds/validator_1_1.dtd">
+
+<form-validation>
+
+    <formset>
+		<form name="beneMngVO">
+			<field property="benName" depends="required">
+        		<arg0 key="beneficiary.apply.name" />       		
+			</field>
+			<field property="benBirth" depends="required">
+        		<arg0 key="beneficiary.dateOfBirth" />
+			</field>
+			<field property="benBelong" depends="required,maxlength">
+        		<arg0 key="beneficiary.belong" />
+        		<arg1 key="1200" resource="true"/>
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>1200</var-value>
+				</var>
+			</field>
+			<field property="benAppFieldNm" depends="required,maxlength">
+        		<arg0 key="beneficiary.field" />
+        		<arg1 key="1200" resource="true"/>
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>1200</var-value>
+				</var>
+			</field>
+			<field property="scholGubun" depends="required">
+			</field>
+			<field property="scholItem" depends="required">
+			</field> 
+		</form>
+    </formset>
+
+</form-validation>

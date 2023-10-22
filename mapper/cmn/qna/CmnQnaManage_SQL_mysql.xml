@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="QnaManage">
+
+	<resultMap id="QnaManage" type="admin.cmn.qna.service.QnaVO">
+		<result property="qnaSeq" column="qna_seq"/>
+		<result property="memNumber" column="mem_seq"/>
+		<result property="qnaTitle" column="qna_title"/>		
+		<result property="qnaContent" column="qna_content"/>					
+		<result property="qnaName" column="mem_name"/>
+		<result property="qnaDate" column="qna_reg_date"/>		
+		<result property="qnaCk" column="qna_ck"/>				
+		<result property="answerCn" column="qna_ans_content"/>
+		<result property="ansDate" column="qna_date"/>
+		<result property="ansAd" column="qna_amswer"/>						
+		<result property="ansDelYn" column="qna_del_yn"/>
+				
+	</resultMap>
+	
+	<select id="selectQnaDetail" resultMap="QnaManage">
+				
+			SELECT 	A.qna_seq,
+					A.mem_seq,
+					A.qna_title,
+					A.mem_name,
+					A.qna_content,
+					A.qna_reg_date,
+					A.qna_ans_content,
+					A.qna_answer,				
+					sysdate(),
+					A.qna_ck,
+					A.qna_del_yn								 			  			 			  		
+			FROM 	qna A                              												
+			WHERE	qna_seq=#{qnaSeq}					
+		
+	</select>
+	
+	<select id="selectQnaList" parameterType="admin.cmn.qna.service.QnaVO" resultMap="QnaManage">
+		/*QnaManage.selectQnaList */
+			SELECT
+				qna_seq,
+				mem_seq,
+				qna_title,
+				mem_name,
+				qna_content,
+				DATE_FORMAT(qna_reg_date,'%Y-%m-%d')qna_reg_date,
+				qna_ans_content,
+				qna_answer,				
+				DATE_FORMAT(qna_date,'%Y-%m-%d') qna_date,
+				qna_ck,
+				qna_del_yn			 			 
+			FROM 	qna 
+			WHERE	1=1   			
+			<if test="searchCnd == 0">
+				AND mem_name LIKE CONCAT('%', #{searchWrd}, '%')
+			</if>
+			<if test="searchCnd == 1">
+				AND qna_title LIKE CONCAT('%', #{searchWrd}, '%')
+			</if>
+			ORDER BY qna_seq DESC			
+			LIMIT  #{recordCountPerPage} OFFSET #{firstIndex}	
+	</select>
+	
+	<select id="selectQnaListCnt" parameterType="admin.cmn.qna.service.QnaVO" resultType="int">
+		
+			SELECT 	COUNT(*) totcnt
+			FROM 	qna
+			WHERE 	1=1
+			<if test="searchCnd == 0">
+				AND mem_name LIKE CONCAT('%', #{searchWrd}, '%')
+			</if>
+			<if test="searchCnd == 1">
+				AND qna_title LIKE CONCAT('%', #{searchWrd}, '%')
+			</if>
+	</select>
+	
+	<insert id="insertQna">	
+			
+			INSERT INTO qna
+				   (
+				    mem_seq
+				  , qna_title
+				  , mem_name
+				  , qna_content
+				  , qna_reg_date
+				  , qna_ans_content 
+				  ,	qna_answer
+				  , qna_date
+				  , qna_ck)
+			VALUES (
+				    #{memNumber}
+				   , #{qnaTitle}
+				  , #{qnaName}						  
+				  , #{qnaContent}			
+				  , sysdate()	
+				  , #{answerCn}
+				  , #{ansAd}			
+				  , sysdate()			 		
+				  , 0)
+		
+	</insert>
+
+	<update id="updateQnaInqireCo">
+				
+			UPDATE	qna	SET
+				    RDCNT= IFNULL(RDCNT,0) + 1				  			
+ 			WHERE  qna_seq=#{qnaSeq}
+		
+	</update>
+
+	<!-- <select id="selectQnaPasswordConfirmCnt" resultType="int">
+		
+			SELECT 	COUNT(*) totcnt
+			FROM 	COMTNQAINFO
+			WHERE	QA_ID=#{qaId}
+			AND		WRITNG_PASSWORD=#{writngPassword}
+					
+	</select> -->
+	
+	<update id="updateQna">
+		
+			UPDATE	qna	SET 
+				  	qna_title=#{qnaTitle}
+				  , qna_content=#{qnaContent}
+				  , qna_reg_date=sysdate()
+				  , qna_ck=#{qnaCk}
+				  , qna_ans_content=#{answerCn}
+				  , qna_date=sysdate()
+				  
+				  
+			WHERE  qna_seq=#{qnaSeq}
+			<!-- <if test="searchCnd == 0">
+				AND qna_ck LIKE CONCAT('%', #{searchWrd}, '%')
+			</if>
+			<if test="searchCnd == 1">
+				AND qna_title LIKE CONCAT('%', #{searchWrd}, '%')
+			</if> -->
+		
+	</update>
+	
+	<delete id="deleteQna">
+		
+			DELETE FROM qna 
+			WHERE  qna_seq=#{qnaSeq}
+		
+	</delete>
+	
+	<select id="selectQnaAnswerDetail" resultMap="QnaManage">
+				
+			SELECT 	C.QA_ID, C.QESTN_SJ, C.QESTN_CN, C.WRITNG_PASSWORD, C.AREA_NO, C.MIDDLE_TELNO, C.END_TELNO,  
+					C.EMAIL_ADRES, C.EMAIL_ANSWER_AT, C.WRTER_NM, C.WRITNG_DE, C.ANSWER_CN, C.ANSWER_DE, C.RDCNT, 
+					C.QNA_PROCESS_STTUS_CODE, D.CODE_NM QNA_PROCESS_STTUS_CODE_NM, 
+					A.USER_NM, A.OFFM_TELNO, A.EMAIL_ADRES AEMAIL_ADRES, B.ORGNZT_NM ,	
+					DATE_FORMAT(C.FRST_REGIST_PNTTM,'%Y-%m-%d') FRST_REGIST_PNTTM   , C.FRST_REGISTER_ID, 
+					DATE_FORMAT(C.LAST_UPDT_PNTTM,'%Y-%m-%d')   LAST_UPDT_PNTTM	    , C.LAST_UPDUSR_ID			 			  			 			  		
+			FROM 	COMTNQAINFO C
+			LEFT 	OUTER JOIN COMTCCMMNDETAILCODE D ON		D.CODE_ID ='COM028' 		AND C.QNA_PROCESS_STTUS_CODE = D.CODE			
+			LEFT 	OUTER JOIN COMTNEMPLYRINFO A     ON		A.ESNTL_ID= C.LAST_UPDUSR_ID 
+			LEFT 	OUTER JOIN COMTNORGNZTINFO B     ON		A.ORGNZT_ID = B.ORGNZT_ID                               												
+			WHERE	QA_ID=#{qaId}
+		
+	</select>
+	
+	<select id="selectQnaAnswerList" parameterType="admin.cmn.qna.service.QnaVO" resultMap="QnaManage">
+		
+			SELECT
+				QA_ID,
+				QESTN_SJ,
+				QESTN_CN,
+				WRITNG_PASSWORD,
+				AREA_NO,
+				MIDDLE_TELNO,
+				END_TELNO,  
+				EMAIL_ADRES,
+				EMAIL_ANSWER_AT,
+				WRTER_NM,
+				WRITNG_DE,
+				ANSWER_CN,
+				ANSWER_DE,
+				RDCNT										INQIRE_CO, 
+				QNA_PROCESS_STTUS_CODE,
+				B.CODE_NM QNA_PROCESS_STTUS_CODE_NM,
+				DATE_FORMAT(A.FRST_REGIST_PNTTM,'%Y-%m-%d') AS FRST_REGIST_PNTTM,
+				A.FRST_REGISTER_ID,
+				A.LAST_UPDT_PNTTM,
+				A.LAST_UPDUSR_ID			 			 
+			FROM 	COMTNQAINFO A
+			LEFT OUTER JOIN COMTCCMMNDETAILCODE B
+			ON		B.CODE_ID ='COM028' AND A.QNA_PROCESS_STTUS_CODE = B.CODE                               						                               			
+			WHERE	1=1   			
+							
+			<if test="searchCnd == 0">AND
+				WRTER_NM LIKE CONCAT('%', #{searchWrd}, '%')
+			</if>
+			<if test="searchCnd == 1">AND
+				CODE_NM LIKE CONCAT('%', #{searchWrd}, '%')
+			</if>
+			ORDER BY QESTN_SJ DESC			
+			LIMIT  #{recordCountPerPage} OFFSET #{firstIndex}	
+	</select>
+	
+	<select id="selectQnaAnswerListCnt" parameterType="admin.cmn.qna.service.QnaVO" resultType="int">
+		
+			SELECT 	COUNT(*) totcnt
+			FROM 	COMTNQAINFO A
+			LEFT OUTER JOIN COMTCCMMNDETAILCODE B
+			ON		B.CODE_ID ='COM028' AND A.QNA_PROCESS_STTUS_CODE = B.CODE            
+			WHERE 	1=1
+					
+			<if test="searchCnd == 0">AND
+				WRTER_NM LIKE CONCAT('%', #{searchWrd}, '%')
+			</if>
+			<if test="searchCnd == 1">AND
+				B.CODE_NM LIKE CONCAT('%', #{searchWrd}, '%')
+			</if>
+	</select>
+		
+	<update id="updateQnaAnswer">
+		
+			UPDATE	COMTNQAINFO	SET 
+				  	QNA_PROCESS_STTUS_CODE=#{qnaProcessSttusCode}
+				  , ANSWER_CN=#{answerCn}
+				  , ANSWER_DE=DATE_FORMAT(sysdate(),'%Y%m%d')
+				  , LAST_UPDT_PNTTM=sysdate()
+				  , LAST_UPDUSR_ID=#{lastUpdusrId}
+			WHERE  QA_ID=#{qaId}
+		
+	</update>
+	
+	<delete id="deleteQnaAnswer">
+		
+			DELETE FROM COMTNQAINFO 
+			WHERE  QA_ID=#{qaId}
+		
+	</delete>
+
+	
+</mapper>

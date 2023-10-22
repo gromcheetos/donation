@@ -1,0 +1,621 @@
+<?xml version="1.0" encoding="UTF-8"?><!-- 
+
+-->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="Scholarship">
+
+	<resultMap id="boardList" type="admin.schol.indi.service.ScholVO">
+		<result property="scholSeq" column="schol_seq"/>
+		<result property="scholGubun" column="schol_gubun"/>
+		<result property="scholGubunNm" column="schol_gubunNm"/>
+		<result property="memSeq" column="mem_seq"/>
+		<result property="emailId" column="email_id"/>
+		<result property="memName" column="mem_name"/>
+		<result property="scholItem" column="schol_item"/>
+		<result property="scholAmount" column="schol_amount"/>
+		<result property="scholNote" column="schol_note"/>		
+		<result property="scholCk" column="schol_ck"/>
+		<result property="scholDate" column="schol_date"/>
+		<result property="scholConfirm" column="schol_confirm"/>
+		<result property="scholGoalAmount" column="schol_goalAmount"/>
+		<result property="scholCurAmount" column="schol_curAmount"/>
+	</resultMap>
+	
+	<resultMap id="donerList" type="admin.schol.indi.service.ScholVO">
+		<result property="doAppSeq" column="do_app_seq"/>
+		<result property="donationGubun" column="donation_gubun"/>
+		<result property="dScholSeq" column="schol_seq"/>
+		<result property="donerEmailId" column="email_id"/>
+		<result property="donerName" column="mem_name"/>
+		<result property="doAmount" column="do_amount"/>
+		<result property="doAppDate" column="do_app_date"/>
+		<result property="doPeriod" column="do_period"/>
+		<result property="donerPhone" column="doner_phone"/>
+		<result property="dScholItem" column="schol_item"/>		
+	</resultMap>
+
+	<resultMap id="benList" type="admin.bene.mng.service.BeneMngVO">
+		<result property="benAppSeq" column="ben_app_seq"/>
+		<result property="fileNo" column="file_no"/>
+		<result property="benScholSeq" column="schol_seq"/>
+		<result property="bEmailId" column="email_id"/>
+		<result property="benName" column="ben_name"/>
+		<result property="benPhone" column="ben_phone"/>
+		<result property="benBelong" column="ben_belong"/>
+		<result property="benBirth" column="ben_birth"/>
+		<result property="benAppField" column="ben_app_field"/><!-- 장학금 분야 번호 -->
+		<result property="benAppFieldNm" column="ben_app_fieldNm"/> <!-- 장학금 분야 -->
+		<result property="benMsg" column="ben_msg"/>
+		<result property="benApplyDate" column="ben_apply_date"/>
+		<result property="benCk" column="ben_app_ck"/>	
+		<result property="scholGubun" column="schol_gubun"/>	<!-- 장학금 종류 번호 -->
+		<result property="scholGubunNm" column="schol_gubunNm"/>	<!-- 장학금 종류 -->
+		<result property="scholItem" column="schol_item"/><!-- 장학금 이름 -->		
+	</resultMap>
+	
+	<resultMap id="fileList" type="admin.schol.indi.service.ScholVO">
+		<result property="fileNo" column="file_no"/>
+		<result property="benAppSeq" column="ben_app_seq"/>	
+		<result property="ofileName" column="Ofile_name"/>
+		<result property="sfileName" column="Sfile_name"/>
+		<result property="fileSize" column="file_size"/>	
+	</resultMap>
+	
+	<resultMap id="shareList" type="admin.schol.indi.service.ScholVO">
+		<result property="shareSeq" column="share_seq"/>
+		<result property="benShareName" column="ben_name"/>
+		<result property="beneEmailId" column="email_id"/>
+		<result property="shareImg" column="share_img"/>
+		<result property="shareTitle" column="share_title"/>
+		<result property="shareContent" column="share_content"/>
+		<result property="shareDate" column="share_date"/>
+		<result property="shareView" column="share_view"/>	
+	</resultMap>
+
+	<resultMap id="commncode" type="admin.schol.indi.service.ScholVO">
+		<result property="codeId" column="CODE_ID"/>
+		<result property="code" column="CODE"/>	
+		<result property="codeNm" column="CODE_NM"/>
+		<result property="codeDc" column="CODE_DC"/>
+		<result property="useAt" column="USE_AT"/>
+		<result property="frstRegistPnttm" column="FRST_REGIST_PNTTM"/>
+		<result property="frstRegisterId" column="FRST_REGISTER_ID"/>
+		<result property="lastUpdtPnttm" column="LAST_UPDT_PNTTM"/>
+		<result property="lastUpdusrId" column="LAST_UPDUSR_ID"/>	
+	</resultMap>
+
+	
+	<insert id="insertArticle" parameterType="admin.schol.indi.service.ScholVO">
+			/* Scholarship.insertArticle */
+			INSERT INTO scholarship
+			(schol_gubun, mem_seq, email_id, 
+			 mem_name, schol_item, schol_amount, schol_note, 
+			 schol_ck, schol_date   
+			 )
+			VALUES
+			( '01', #{memSeq}, #{emailId}, 
+			  #{memName}, #{scholItem}, #{scholAmount}, #{scholNote}, 
+			  '0',SYSDATE()
+			 )			
+	</insert>
+
+	<!-- 개별장학금 -->	
+	<select id="selectScholIndiList" parameterType="admin.schol.indi.service.ScholVO" resultMap="boardList">
+		/* Scholarship.selectScholIndiList */
+		SELECT
+			a.schol_seq, 
+			a.schol_gubun, 
+			a.mem_seq,
+			a.email_id, 
+			a.mem_name, 
+			a.schol_item, 
+			a.schol_amount, 
+			a.schol_note, 
+			a.schol_ck,
+			a.schol_date, 
+			a.schol_confirm
+		FROM
+			SCHOLARSHIP a
+		WHERE 1 = 1 
+		  AND a.schol_gubun= '01' 			
+		<if test="searchCnd == 0">
+			<if test="searchWrd != ''">
+		  		AND a.schol_item LIKE CONCAT ('%', #{searchWrd},'%')
+		  	</if> 		
+		</if>
+		<if test="searchCnd == 1">
+			<if test="searchWrd != ''">
+				AND a.email_id LIKE CONCAT ('%', #{searchWrd},'%')
+			</if> 		
+		</if>				
+				
+		ORDER BY a.schol_seq DESC
+		LIMIT #{recordCountPerPage} OFFSET #{firstIndex}
+						
+	</select>	
+	
+	<select id="selectScholIndiListCnt" parameterType="admin.schol.indi.service.ScholVO" resultType="java.lang.Integer">
+		/* Scholarship.selectScholIndiList */
+		SELECT
+			COUNT(a.schol_seq)
+		FROM
+			SCHOLARSHIP a
+		WHERE 1 = 1 
+		  AND a.schol_gubun= '01' 			
+		<if test="searchCnd == 0">
+			<if test="searchWrd != ''">
+		  		AND a.schol_item LIKE CONCAT ('%', #{searchWrd},'%')
+		  	</if> 		
+		</if>
+		<if test="searchCnd == 1">
+			<if test="searchWrd != ''">
+				AND a.email_id LIKE CONCAT ('%', #{searchWrd},'%')
+			</if> 		
+		</if>				
+	</select>	
+ 
+	<select id="selectScholIndiDetail" parameterType="admin.schol.indi.service.ScholVO" resultMap="boardList">
+		/* Scholarship.selectScholIndiDetail */
+		
+		SELECT
+			A.SCHOL_SEQ, 
+			A.SCHOL_GUBUN, 
+			A.MEM_SEQ,
+			A.EMAIL_ID, 
+			A.MEM_NAME, 
+			A.SCHOL_ITEM, 
+			A.SCHOL_AMOUNT, 
+			A.SCHOL_NOTE, 
+			A.SCHOL_CK,
+			A.SCHOL_DATE, 
+			A.SCHOL_CONFIRM
+		FROM
+			SCHOLARSHIP A  
+		WHERE 1 =1
+		  AND A.SCHOL_SEQ = #{scholSeq}	
+						
+	</select>
+	
+	
+ 	<update id="updateArticle" parameterType="admin.schol.indi.service.ScholVO">
+		/* Scholarship.updateArticle */
+		UPDATE scholarship SET 
+			mem_seq = #{memSeq},
+			email_id = #{emailId}, 
+			mem_name = #{memName},		
+			schol_item = #{scholItem},
+			schol_amount = #{scholAmount},
+			schol_note = #{scholNote},
+			schol_ck = #{scholCk},
+			schol_date = SYSDATE()
+		WHERE schol_seq = #{scholSeq}
+ 	</update>
+
+ 	<update id="deleteArticle" parameterType="admin.schol.indi.service.ScholVO">
+		/* Scholarship.deleteArticle */
+		DELETE from scholarship
+		WHERE schol_seq = #{scholSeq}
+ 	</update>
+
+ 	<select id="updateScholCk" parameterType="admin.schol.indi.service.ScholVO" >
+		/* Scholarship.updateScholCk */
+ 		
+		UPDATE scholarship SET 
+		schol_ck = 1,
+		schol_confirm = SYSDATE()
+		WHERE schol_seq = #{scholSeq}
+ 	</select>
+ 	
+ 	<select id="updateScholConfirm" parameterType="admin.schol.indi.service.ScholVO" >
+		/* Scholarship.updateScholConfirm */
+		UPDATE scholarship SET 
+		schol_ck = 0
+		
+		WHERE schol_seq = #{scholSeq}
+ 		
+ 	</select>
+ 	
+ 	<select id="updateScholClosed" parameterType="admin.schol.indi.service.ScholVO" >
+		/* Scholarship.updateScholClosed */
+		UPDATE scholarship SET 
+		schol_ck = '2'
+		WHERE schol_seq = #{scholSeq}
+ 	</select> 	
+	
+	<!-- 특별장학금 -->
+	<select id="selectScholSpecialList" parameterType="admin.schol.indi.service.ScholVO" resultMap="boardList">
+		/* Scholarship.selectScholSpecialList */
+		SELECT
+			a.schol_seq, a.schol_gubun, a. mem_seq,
+			a.email_id, a.mem_name, a.schol_item, a.schol_amount, a.schol_note, a.schol_ck,
+			a.schol_date, a.schol_confirm, a.schol_goalAmount, a.schol_curAmount
+		FROM
+			SCHOLARSHIP a
+		WHERE
+			1=1 
+		AND a.schol_gubun ='02'			
+		<if test="searchCnd == 0">
+			<if test="searchWrd != ''">
+		AND a.schol_item LIKE CONCAT ('%', #{searchWrd},'%')
+			</if> 		
+		</if>
+		<if test="searchCnd == 1">
+			<if test="searchWrd != ''">
+		AND a.email_id LIKE CONCAT ('%', #{searchWrd},'%')
+			</if> 		
+		</if>				
+				
+		ORDER BY a.schol_seq DESC
+		LIMIT #{recordCountPerPage} OFFSET #{firstIndex}
+	</select>	
+	
+	
+	<select id="selectScholSpecialDetail" parameterType="admin.schol.indi.service.ScholVO" resultMap="boardList">
+		/* Scholarship.selectScholSpecialDetail */
+		
+		SELECT
+			a.schol_seq,
+			a.schol_gubun,
+			a.mem_seq,
+			a.email_id,
+			a.mem_name,
+			a.schol_item,
+			a.schol_amount, 
+			a.schol_note, 
+			a.schol_ck,
+			a.schol_date, 
+			a.schol_confirm, 
+			a.schol_goalAmount, 
+			a.schol_curAmount
+		FROM
+			scholarship a	
+		WHERE
+			a.schol_seq = #{scholSeq}	
+						
+	</select>
+	
+	<insert id="insertSpecial" parameterType="admin.schol.indi.service.ScholVO">
+		/* Scholarship.insertSpecial */
+		
+		INSERT INTO scholarship
+		(schol_gubun, mem_seq, email_id, 
+		 mem_name, schol_item, schol_amount, schol_note, 
+		 schol_ck, schol_date, schol_goalAmount  
+		 )
+		VALUES
+		( '02', #{memSeq}, #{emailId}, 
+		  #{memName}, #{scholItem}, #{scholAmount}, #{scholNote}, 
+		  '0',SYSDATE(), #{scholGoalAmount}
+		 )			
+		
+	</insert>
+	
+	<update id="updateSpecial" parameterType="admin.schol.indi.service.ScholVO">
+		/* Scholarship.insertSpecial */ 		
+		UPDATE scholarship SET 
+			mem_seq = #{memSeq},
+			email_id = #{emailId}, 
+			mem_name = #{memName},		
+			schol_item = #{scholItem},
+			schol_amount = #{scholAmount},
+			schol_note = #{scholNote},
+			schol_ck = #{scholCk},
+			schol_date = SYSDATE(),
+			schol_goalAmount = #{scholGoalAmount},
+			schol_curAmount = #{scholCurAmount}
+		WHERE schol_seq = #{scholSeq}
+ 	</update>
+ 	
+ 	
+ 	<select id="selectSpecialDonerList" parameterType="admin.schol.indi.service.ScholVO" resultMap="donerList">
+		/* Scholarship.selectSpecialDonerList */ 		
+		SELECT
+			d.do_app_seq, d.donation_gubun, d.email_id, d.mem_name, d.do_amount, d.do_app_date, d.do_period, d.doner_phone 
+		FROM
+			donation as d
+		LEFT JOIN
+			scholarship as s
+		ON
+			d.schol_seq=s.schol_seq 
+		WHERE
+			s.schol_seq=#{scholSeq}
+	</select>
+ 	
+ 	<select id="selectSpecialBenList" parameterType="admin.schol.indi.service.ScholVO" resultMap="benList">
+		/* Scholarship.selectSpecialBenList */ 		
+		SELECT
+			b.ben_name, b.ben_apply_date, b.schol_gubun
+		FROM
+			benefit as b
+		LEFT JOIN
+			scholarship as s
+		ON
+			b.schol_seq=s.schol_seq 
+		WHERE
+			s.schol_seq =#{scholSeq}
+	</select>
+	
+	<!-- 모금장학금 -->
+	<select id="selectScholSubList" parameterType="admin.schol.indi.service.ScholVO" resultMap="boardList">
+		/* Scholarship.selectScholSubList */
+		SELECT
+			a.schol_seq, a.schol_gubun, a. mem_seq,
+			a.email_id, a.mem_name, a.schol_item, a.schol_amount, a.schol_note, a.schol_ck,
+			a.schol_date, a.schol_confirm, a.schol_goalAmount, a.schol_curAmount
+		FROM
+			scholarship a
+		WHERE
+			1=1 
+		AND a.schol_gubun ='03'			
+	
+		<if test="searchCnd == 0">AND
+				a.schol_item LIKE CONCAT ('%', #{searchWrd},'%') 		
+		</if>
+		<if test="searchCnd == 1">AND
+				a.email_id LIKE CONCAT ('%', #{searchWrd},'%') 		
+		</if>				
+				
+		ORDER BY a.schol_seq DESC
+		LIMIT #{recordCountPerPage} OFFSET #{firstIndex}
+	</select>
+	
+	<insert id="insertSubscription" parameterType="admin.schol.indi.service.ScholVO">
+		/* Scholarship.insertSubscription */
+		INSERT INTO scholarship
+		(schol_gubun, mem_seq, email_id, 
+		 mem_name, schol_item, schol_amount, schol_note, 
+		 schol_ck, schol_date, schol_goalAmount  
+		 )
+		VALUES
+		( '03', #{memSeq}, #{emailId}, 
+		  #{memName}, #{scholItem}, #{scholAmount}, #{scholNote}, 
+		  '0',SYSDATE(), #{scholGoalAmount}
+		 )			
+		
+	</insert>
+ 	
+ 	<select id="selectBeneMngList" parameterType="admin.bene.mng.service.BeneMngVO" resultMap="benList">
+		/* Scholarship.selectBeneMngList */
+		SELECT
+			a.ben_app_seq, 
+			a.schol_seq, 
+			a.email_id, 
+			a.ben_name,
+			a.ben_phone, 
+			a.ben_belong, 
+			a.ben_birth, 
+			a.ben_app_field, 
+			a.ben_msg, 
+			a.ben_apply_date,
+			a.ben_app_ck, 
+			a.schol_gubun,
+			b.code_nm as ben_app_fieldNm
+		FROM
+			BENEFIT a
+		LEFT OUTER JOIN CMMNDETAILCODE b ON a.ben_app_field = b.code AND b.code_id = 'COM014'
+		WHERE
+			1=1	
+			 AND	a.ben_name LIKE CONCAT ('%', #{searchWrd},'%') 	
+		<if test= "#{benAppField != null}">
+			OR a.ben_app_field = #{benAppField}
+		</if>
+		ORDER BY a.ben_app_seq DESC
+		LIMIT #{recordCountPerPage} OFFSET #{firstIndex}
+						
+	</select>
+	
+	<select id="selectBeneMngDetail" parameterType="admin.bene.mng.service.BeneMngVO" resultMap="benList" >
+		/* Scholarship.selectBeneMngDetail */
+		SELECT
+			b.ben_app_seq, 
+			b.email_id, 
+			b.ben_name,
+			b.ben_phone, 
+			b.ben_belong, 
+			b.ben_birth, 
+			b.ben_app_field, 
+			a.code_nm as ben_app_fieldNm,
+			b.ben_msg, 
+			b.ben_apply_date,
+			b.ben_app_ck, 
+			b.schol_gubun,
+			b.schol_gubunNm,
+			b.schol_seq,
+			d.schol_item
+		FROM BENEFIT b 
+		LEFT OUTER JOIN CMMNDETAILCODE a ON b.ben_app_field = a.code AND a.code_id = 'COM014'
+		LEFT OUTER JOIN CMMNDETAILCODE c ON b.schol_gubun = c.code AND a.code_id = 'COM002'
+		LEFT OUTER JOIN SCHOLARSHIP d ON b.schol_seq = d.schol_seq
+		WHERE
+			b.ben_app_seq = #{benAppSeq}	
+	</select>
+	
+	<select id="updateBeneCk" parameterType="admin.schol.indi.service.ScholVO" >
+		/* Scholarship.updateBeneCk */
+		UPDATE benefit SET 
+		ben_app_ck = 1,
+		schol_gubun =#{scholGubun},
+		ben_app_field=#{benAppField},
+		ben_apply_date = SYSDATE()
+		WHERE ben_app_seq = #{benAppSeq}
+ 		
+ 	</select>
+ 	
+ 	<select id="updateBeneConfirm" parameterType="admin.schol.indi.service.ScholVO" >
+		/* Scholarship.updateBeneConfirm */
+		UPDATE benefit SET 
+		ben_app_ck = 0,
+		schol_gubun ='',
+		ben_app_field= #{benAppField}
+		WHERE ben_app_seq = #{benAppSeq}
+ 	</select>
+	
+	<update id="deleteBenefit" parameterType="admin.schol.indi.service.ScholVO">
+		/* Scholarship.deleteBenefit */
+		DELETE from benefit
+		WHERE ben_app_seq = #{benAppSeq}
+ 		
+ 	</update>
+ 	
+ 	<update id="updateBeneMng" parameterType="admin.bene.mng.service.BeneMngVO">
+		/* Scholarship.updateBeneMng*/ 		
+		UPDATE benefit b 
+		SET 
+			b.schol_seq= (select s.schol_seq from scholarship as s where b.schol_item = s.schol_item),
+			b.ben_name = #{benName},
+			b.ben_birth = #{benBirth},
+			b.ben_belong = #{benBelong},
+			b.ben_app_field = #{benAppField},
+			b.ben_app_ck = #{benCk},
+			b.schol_gubun = #{scholGubun},
+			b.schol_gubunNm = #{scholGubunNm},
+			b.schol_item=#{scholItem}
+		WHERE b.ben_app_seq = #{benAppSeq} and b.schol_gubun = #{scholGubun}
+ 	</update>
+ 	
+	<select id="selectScholItem" parameterType="admin.schol.indi.service.ScholVO" resultMap="boardList">
+		/* Scholarship.selectScholItem */ 		
+		SELECT
+				schol_item
+			FROM
+				scholarship
+			WHERE
+				schol_gubun =#{scholGubun}
+	</select>
+	
+	<select id="selectFileList" parameterType="admin.schol.indi.service.ScholVO" resultMap="fileList"> 
+		/* Scholarship.deleteBenefit */
+		<![CDATA[ 
+			SELECT 
+				file_no, Ofile_name, ROUND(FILE_SIZE/1024,1) AS FILE_SIZE 
+			FROM 
+				benefit_file 
+			WHERE 
+				ben_app_seq = #{benAppSeq}  
+			]]> 
+	</select>
+
+	<select id="selectFileInfo" parameterType="hashmap" resultType="hashmap"> 
+		/* Scholarship.deleteBenefit */
+		<![CDATA[ 
+			SELECT 
+				Ofile_name, Sfile_name 
+			FROM 
+				benefit_file 
+			WHERE 
+				file_no = #{fileNo} 
+		]]> 
+	</select>
+	
+	<insert id="insertfileBoard" parameterType="java.util.HashMap" useGeneratedKeys="true" keyProperty="benAppSeq" >
+		/* Scholarship.insertfileBoard */
+<!-- 		<selectKey keyProperty="benAppSeq" resultType="string" order="BEFORE">
+			SELECT * FROM (SELECT MAX(ben_app_seq)+1 FROM benefit) NEXT
+		</selectKey>
+ -->
+   		INSERT INTO BENEFIT(
+			BEN_APP_FIELD,
+			BEN_MSG
+		) VALUES(
+			#{benAppField},
+			#{benMsg}
+		)
+	</insert>
+	
+	<insert id="insertFile" parameterType="hashmap">
+		/* Scholarship.insertFile */
+		INSERT INTO benefit_file (				
+			BEN_APP_SEQ,
+			OFILE_NAME,
+			SFILE_NAME,
+			FILE_SIZE			
+		) VALUES (					
+			#{benAppSeq},
+			#{ofileName},
+			#{sfileName},
+			#{fileSize}		
+		)
+	</insert>
+
+	<select id="selectBeneShareList" parameterType="admin.schol.indi.service.ScholVO" resultMap="shareList">
+		/* Scholarship.selectBeneShareList */
+		SELECT
+			share_seq, ben_name, email_id, share_img, share_title,
+			share_content, share_date, share_view
+		FROM
+			share
+		WHERE
+			1=1  			
+	
+		<if test="searchCnd == 0">AND
+				ben_name LIKE CONCAT ('%', #{searchWrd},'%') 		
+		</if>
+		<if test="searchCnd == 1">AND
+				email_id LIKE CONCAT ('%', #{searchWrd},'%') 		
+		</if>				
+				
+		ORDER BY share_seq DESC
+		LIMIT #{recordCountPerPage} OFFSET #{firstIndex}
+	</select>
+	
+	<select id="selectBeneShareDetail" parameterType="admin.schol.indi.service.ScholVO" resultMap="shareList">
+		/* Scholarship.selectBeneShareDetail */
+		SELECT
+			share_seq, ben_name, email_id, share_img, share_title,
+			share_content, share_date, share_view
+		FROM
+			share	
+		WHERE
+			share_seq = #{shareSeq}		
+	</select>
+	
+	<update id="deleteShare" parameterType="admin.schol.indi.service.ScholVO">
+ 		/* Scholarship.deleteShare */
+		DELETE from share
+		WHERE share_seq = #{shareSeq}
+ 	</update>
+
+	<!-- <select id="selectArticleDetailDefault" parameterType="egovframework.com.cop.bbs.service.BoardVO" resultMap="boardSubJectList">
+	
+			SELECT
+					a.NTT_ID, a.NTT_SJ, a.NTT_CN, a.FRST_REGISTER_ID, IFNULL(b.USER_NM, a.NTCR_NM) as FRST_REGISTER_NM,
+					DATE_FORMAT(a.FRST_REGIST_PNTTM, '%Y-%m-%d') as FRST_REGIST_PNTTM,
+					a.RDCNT, a.PARNTSCTT_NO, a.ANSWER_AT, a.ANSWER_LC, a.USE_AT, a.ATCH_FILE_ID,
+					a.BBS_ID, a.NTCE_BGNDE, a.NTCE_ENDDE, a.SJ_BOLD_AT, a.NOTICE_AT, a.SECRET_AT, c.COMMENT_CO,
+					a.NTCR_ID, d.BLOG_ID, d.REPLY_POSBL_AT
+				FROM
+					COMTNBBS a
+				LEFT OUTER JOIN 
+					COMVNUSERMASTER b
+				ON a.FRST_REGISTER_ID = b.ESNTL_ID 
+				LEFT OUTER JOIN
+					(SELECT NTT_ID, BBS_ID, COUNT(1) AS COMMENT_CO 
+					   FROM COMTNCOMMENT 
+					 WHERE USE_AT = 'Y' 
+					 GROUP BY NTT_ID, BBS_ID) c
+				ON a.NTT_ID = c.NTT_ID
+				LEFT OUTER JOIN
+					COMTNBBSMASTER d
+				ON a.BBS_ID = d.BBS_ID
+				WHERE
+					a.BBS_ID = #{bbsId}
+				AND a.USE_AT = 'Y'
+				ORDER BY a.SORT_ORDR DESC, NTT_NO ASC
+				<if test="searchCnd == 5">
+					LIMIT 5 		
+				</if>
+				<if test="searchCnd == 10">
+					LIMIT 10 		
+				</if>
+				<if test="searchCnd == 15">
+					LIMIT 15 		
+				</if>
+				<if test="searchCnd == 20">
+					LIMIT 20 		
+				</if>
+				<if test="searchCnd == 30">
+					LIMIT 30 		
+				</if>
+	</select> -->
+</mapper>
